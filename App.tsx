@@ -6,7 +6,7 @@
  */
 
 import React, {useEffect} from 'react';
-import {Text, View} from 'react-native';
+import {Button, Text, View} from 'react-native';
 
 import usePushNotification from './usePushNotifications';
 
@@ -18,6 +18,7 @@ function App(): JSX.Element {
     listenToForegroundNotifications,
     onNotificationOpenedAppFromBackground,
     onNotificationOpenedAppFromQuit,
+    scheduleNotification,
   } = usePushNotification();
 
   useEffect(() => {
@@ -41,6 +42,16 @@ function App(): JSX.Element {
     <View
       style={{justifyContent: 'center', alignItems: 'center', height: '100%'}}>
       <Text style={{fontWeight: 'bold'}}>Test Notification App</Text>
+      <Button
+        title="Programar notification"
+        onPress={() =>
+          scheduleNotification(
+            '2023-09-05T20:22:00.000Z',
+            'Nueva notificación',
+            '¿Vamos a jugar?',
+          )
+        }
+      />
     </View>
   );
 }

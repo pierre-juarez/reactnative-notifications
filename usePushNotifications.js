@@ -1,7 +1,7 @@
 import React from 'react';
 import messaging from '@react-native-firebase/messaging';
 import {PermissionsAndroid, Platform} from 'react-native';
-import notifee from '@notifee/react-native';
+import notifee, {TriggerType} from '@notifee/react-native';
 
 const usePushNotification = () => {
   const requestUserPermission = async () => {
@@ -100,6 +100,41 @@ const usePushNotification = () => {
     }
   };
 
+  const scheduleNotification = async (dateString, title, message) => {
+    // Request permissions (required for iOS)
+    await notifee.requestPermission();
+
+    // Create a channel (required for Android)
+    const channelId = await notifee.createChannel({
+      id: 'sound',
+      name: 'Default Channel',
+    });
+
+    const date = new Date(dateString); // Suma 60000 milisegundos (1 minuto) al tiempo actual
+
+    console.log(
+      '🚀 ~ file: usePushNotifications.js:106 ~ scheduleNotification ~ date.getHours:',
+      date,
+    );
+    // Create a time-based trigger
+    const trigger = {
+      type: TriggerType.TIMESTAMP,
+      timestamp: date.getTime(), // fire at 11:10am (10 minutes before meeting)
+    };
+
+    // Create a trigger notification
+    await notifee.createTriggerNotification(
+      {
+        title: title,
+        body: message,
+        android: {
+          channelId: channelId,
+        },
+      },
+      trigger,
+    );
+  };
+
   return {
     requestUserPermission,
     getFCMToken,
@@ -107,6 +142,7 @@ const usePushNotification = () => {
     listenToBackgroundNotifications,
     onNotificationOpenedAppFromBackground,
     onNotificationOpenedAppFromQuit,
+    scheduleNotification,
   };
 };
 
